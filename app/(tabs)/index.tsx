@@ -1,13 +1,11 @@
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import icedCoffee from "@/assets/images/iced-coffee.jpg";
+import TextInputExample from "./_components/TextInputExample";
 
 const app = () => {
   return (
     <View style={styles.container}>
-      <ImageBackground source={icedCoffee}>
-        <Text style={styles.text}>Coffee shop</Text>
-      </ImageBackground>
+      <TextInputExample />
     </View>
   );
 };
@@ -31,5 +29,6 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: "bold",
     textAlign: "center",
+    backdropFilter: "rgba(0,0,0,0.5)",
   },
 });
