@@ -1,28 +1,39 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import TodoItem from "../_components/TodoItem";
+
+type Todo = {
+  id: string;
+  text: string;
+  isCompleted: boolean;
+};
 
 export default function HomeScreen() {
   const [text, setText] = React.useState("");
-  const [todos, setTodos] = React.useState<string[]>([]);
+  const [isCompleted, setIsCompleted] = React.useState(false);
+  const [todos, setTodos] = React.useState<Todo[]>([]);
 
   const handleAddTodo = () => {
-    setTodos([...todos, text]);
+    setTodos([...todos, { id: uuidv4(), text, isCompleted }]);
     setText("");
   };
+
+  console.log(todos);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView style={styles.todoList}>
-          {todos.map((todo, index) => (
-            <Text key={index} style={styles.todoItem}>
-              {todo}
-            </Text>
-          ))}
-        </ScrollView>
+        <FlatList
+          style={styles.flatList}
+          data={todos}
+          renderItem={({ item }) => <TodoItem todo={item} />}
+          keyExtractor={(_, index) => String(index)}
+        />
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={handleAddTodo}>
             <Ionicons name="add" size={32} color="#000" />
@@ -38,7 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
   },
-  todoList: {
+  flatList: {
     marginBottom: 8,
   },
   todoItem: {
