@@ -1,5 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Button, StyleSheet, Text, TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
@@ -13,28 +15,47 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
-        <TextInput style={styles.input} onChangeText={setText} value={text} />
-        {todos.map((v, i) => (
-          <Text key={i}>{v}</Text>
-        ))}
-        <Button title="Todoを追加" onPress={handleAddTodo} />
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.todoList}>
+          {todos.map((todo, index) => (
+            <Text key={index} style={styles.todoItem}>
+              {todo}
+            </Text>
+          ))}
+        </ScrollView>
+        <View style={styles.inputContainer}>
+          <TouchableOpacity onPress={handleAddTodo}>
+            <Ionicons name="add" size={32} color="#000" />
+          </TouchableOpacity>
+          <TextInput style={styles.input} onChangeText={setText} value={text} />
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 const styles = StyleSheet.create({
-  // container: {
-  //   display: "flex",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   height: "100%",
-  // },
-  // text: {},
-  input: {
-    height: 40,
-    margin: 12,
+  safeArea: {
+    flex: 1,
+    padding: 24,
+  },
+  todoList: {
+    marginBottom: 8,
+  },
+  todoItem: {
+    marginBottom: 8,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 4,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderWidth: 0,
     padding: 10,
   },
 });
