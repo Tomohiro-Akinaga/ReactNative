@@ -5,15 +5,16 @@ type Props = {
   todo: {
     id: string;
     text: string;
-    isCompleted: boolean;
+    completed: boolean;
   };
+  onChangeValue: (id: string) => void;
 };
 
-export default function TodoItem({ todo }: Props) {
+export default function TodoItem({ todo, onChangeValue }: Props) {
   return (
     <View style={styles.list}>
       <Text style={styles.text}>{todo.text}</Text>
-      <Checkbox value={todo.isCompleted} />
+      <Checkbox value={todo.completed} onValueChange={() => onChangeValue(todo.id)} />
     </View>
   );
 }

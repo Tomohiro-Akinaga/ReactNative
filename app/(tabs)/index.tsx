@@ -2,28 +2,32 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
-
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { v4 as uuidv4 } from "uuid";
 import TodoItem from "../_components/TodoItem";
 
 type Todo = {
   id: string;
   text: string;
-  isCompleted: boolean;
+  completed: boolean;
 };
 
 export default function HomeScreen() {
-  const [text, setText] = React.useState("");
-  const [isCompleted, setIsCompleted] = React.useState(false);
-  const [todos, setTodos] = React.useState<Todo[]>([]);
+  const [text, onChangeText] = React.useState("");
+  const [todos, onChangeTodos] = React.useState<Todo[]>([]);
 
-  const handleAddTodo = () => {
-    setTodos([...todos, { id: uuidv4(), text, isCompleted }]);
-    setText("");
+  const addTodo = () => {
+    onChangeTodos([...todos, { id: uuidv4(), text, completed: false }]);
+    onChangeText("");
   };
 
-  console.log(todos);
+  const toggleComplete = (id: string) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id !== id) return todo;
+      return { ...todo, completed: !todo.completed };
+    });
+    onChangeTodos(newTodos);
+  };
 
   return (
     <SafeAreaProvider>
@@ -31,14 +35,14 @@ export default function HomeScreen() {
         <FlatList
           style={styles.flatList}
           data={todos}
-          renderItem={({ item }) => <TodoItem todo={item} />}
-          keyExtractor={(_, index) => String(index)}
+          renderItem={({ item }) => <TodoItem todo={item} onChangeValue={() => toggleComplete(item.id)} />}
+          keyExtractor={(item) => item.id}
         />
         <View style={styles.inputContainer}>
-          <TouchableOpacity onPress={handleAddTodo}>
+          <TouchableOpacity onPress={addTodo}>
             <Ionicons name="add" size={32} color="#000" />
           </TouchableOpacity>
-          <TextInput style={styles.input} onChangeText={setText} value={text} />
+          <TextInput style={styles.input} onChangeText={onChangeText} value={text} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
