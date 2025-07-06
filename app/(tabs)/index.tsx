@@ -18,7 +18,7 @@ const storeData = async (value: Todo[]) => {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem("todos", jsonValue);
   } catch (e) {
-    // saving error
+    console.log(e);
   }
 };
 
@@ -26,21 +26,16 @@ const removeValue = async () => {
   try {
     await AsyncStorage.removeItem("todos");
   } catch (e) {
-    // remove error
+    console.log(e);
   }
-
-  console.log("Done.");
 };
 
 const getData = async () => {
   try {
     const value = await AsyncStorage.getItem("todos");
-    if (value !== null) {
-      return JSON.parse(value);
-    }
-    return null;
+    if (value !== null) return JSON.parse(value);
   } catch (e) {
-    // error reading value
+    console.log(e);
     return null;
   }
 };
@@ -49,20 +44,18 @@ export default function HomeScreen() {
   const [text, onChangeText] = React.useState("");
   const [todos, onChangeTodos] = React.useState<Todo[]>([]);
 
-  const addTodo = () => {
-    onChangeTodos([...todos, { id: uuidv4(), text, completed: false }]);
-    onChangeText("");
-  };
-
-  console.log(todos);
-
   useEffect(() => {
     const getTodos = async () => {
       const response = await getData();
       if (response) onChangeTodos(response);
     };
     getTodos();
-  }, []);
+  }, [todos]);
+
+  const addTodo = () => {
+    onChangeTodos([...todos, { id: uuidv4(), text, completed: false }]);
+    onChangeText("");
+  };
 
   const toggleComplete = (id: string) => {
     const newTodos = todos.map((todo) => {
@@ -71,6 +64,8 @@ export default function HomeScreen() {
     });
     onChangeTodos(newTodos);
   };
+
+  console.log(todos);
 
   return (
     <SafeAreaProvider>
