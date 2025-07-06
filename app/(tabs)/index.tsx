@@ -39,6 +39,10 @@ export default function HomeScreen() {
     if (data) onChangeTodos(todos.filter((t) => t.id !== id));
   };
 
+  const editTodo = async (id: string, task: string) => {
+    console.log(id, task);
+  };
+
   const toggleComplete = async (id: string) => {
     const todo = todos.find((t) => t.id === id);
     if (!todo) return;
@@ -57,6 +61,7 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TodoItem
               todo={item}
+              onEditTodo={() => editTodo(item.id, item.task)}
               onToggleComplete={() => toggleComplete(item.id)}
               onDelete={() => deleteTodo(item.id)}
             />
