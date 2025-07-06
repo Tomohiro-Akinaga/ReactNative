@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import "react-native-get-random-values";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +13,38 @@ type Todo = {
   completed: boolean;
 };
 
+const storeData = async (value: Todo[]) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem("todos", jsonValue);
+  } catch (e) {
+    // saving error
+  }
+};
+
+const removeValue = async () => {
+  try {
+    await AsyncStorage.removeItem("todos");
+  } catch (e) {
+    // remove error
+  }
+
+  console.log("Done.");
+};
+
+const getData = async () => {
+  try {
+    const value = await AsyncStorage.getItem("todos");
+    if (value !== null) {
+      return JSON.parse(value);
+    }
+    return null;
+  } catch (e) {
+    // error reading value
+    return null;
+  }
+};
+
 export default function HomeScreen() {
   const [text, onChangeText] = React.useState("");
   const [todos, onChangeTodos] = React.useState<Todo[]>([]);
@@ -20,6 +53,16 @@ export default function HomeScreen() {
     onChangeTodos([...todos, { id: uuidv4(), text, completed: false }]);
     onChangeText("");
   };
+
+  console.log(todos);
+
+  useEffect(() => {
+    const getTodos = async () => {
+      const response = await getData();
+      if (response) onChangeTodos(response);
+    };
+    getTodos();
+  }, []);
 
   const toggleComplete = (id: string) => {
     const newTodos = todos.map((todo) => {
