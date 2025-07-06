@@ -1,5 +1,5 @@
 import { Checkbox } from "expo-checkbox";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   todo: {
@@ -7,15 +7,16 @@ type Props = {
     task: string;
     completed: boolean;
   };
-  onChangeValue: (id: string) => void;
+  onToggleComplete: (id: string) => void;
+  onDelete: (id: string) => void;
 };
 
-export default function TodoItem({ todo, onChangeValue }: Props) {
-  console.log("todoのレス", todo);
+export default function TodoItem({ todo, onToggleComplete, onDelete }: Props) {
   return (
     <View style={styles.list}>
       <Text style={styles.text}>{todo.task}</Text>
-      <Checkbox value={todo.completed} onValueChange={() => onChangeValue(todo.id)} />
+      <Checkbox value={todo.completed} onValueChange={() => onToggleComplete(todo.id)} />
+      <Button title="削除" onPress={() => onDelete(todo.id)} />
     </View>
   );
 }

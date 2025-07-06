@@ -23,7 +23,7 @@ export default function HomeScreen() {
       else onChangeTodos(data);
     };
     fetchTodos();
-  }, []);
+  }, [todos]);
 
   const addTodo = async () => {
     const { data } = await supabase
@@ -32,6 +32,11 @@ export default function HomeScreen() {
       .select();
     if (data) onChangeTodos([...todos, ...data]);
     onChangeText("");
+  };
+
+  const deleteTodo = async (id: string) => {
+    const { data } = await supabase.from("todos").delete().eq("id", id);
+    if (data) onChangeTodos(todos.filter((t) => t.id !== id));
   };
 
   const toggleComplete = async (id: string) => {
@@ -49,7 +54,13 @@ export default function HomeScreen() {
         <FlatList
           style={styles.flatList}
           data={todos}
-          renderItem={({ item }) => <TodoItem todo={item} onChangeValue={() => toggleComplete(item.id)} />}
+          renderItem={({ item }) => (
+            <TodoItem
+              todo={item}
+              onToggleComplete={() => toggleComplete(item.id)}
+              onDelete={() => deleteTodo(item.id)}
+            />
+          )}
           keyExtractor={(item) => item.id}
         />
         <View style={styles.inputContainer}>
