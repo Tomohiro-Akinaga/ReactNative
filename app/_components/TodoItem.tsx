@@ -4,16 +4,17 @@ import { StyleSheet, Text, View } from "react-native";
 type Props = {
   todo: {
     id: string;
-    text: string;
+    task: string;
     completed: boolean;
   };
   onChangeValue: (id: string) => void;
 };
 
 export default function TodoItem({ todo, onChangeValue }: Props) {
+  console.log("todoのレス", todo);
   return (
     <View style={styles.list}>
-      <Text style={styles.text}>{todo.text}</Text>
+      <Text style={styles.text}>{todo.task}</Text>
       <Checkbox value={todo.completed} onValueChange={() => onChangeValue(todo.id)} />
     </View>
   );
