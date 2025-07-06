@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import "react-native-get-random-values";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { v4 as uuidv4 } from "uuid";
+import { supabase } from "../../libs/supabase";
 import TodoItem from "../_components/TodoItem";
 
 type Todo = {
   id: string;
-  text: string;
+  task: string;
   completed: boolean;
 };
 
@@ -16,17 +16,31 @@ export default function HomeScreen() {
   const [text, onChangeText] = React.useState("");
   const [todos, onChangeTodos] = React.useState<Todo[]>([]);
 
-  const addTodo = () => {
-    onChangeTodos([...todos, { id: uuidv4(), text, completed: false }]);
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const { data, error } = await supabase.from("todos").select("*");
+      if (error) console.log("error", error);
+      else onChangeTodos(data);
+    };
+    fetchTodos();
+  }, []);
+
+  const addTodo = async () => {
+    const { data } = await supabase
+      .from("todos")
+      .insert([{ task: text }])
+      .select();
+    if (data) onChangeTodos([...todos, ...data]);
     onChangeText("");
   };
 
-  const toggleComplete = (id: string) => {
-    const newTodos = todos.map((todo) => {
-      if (todo.id !== id) return todo;
-      return { ...todo, completed: !todo.completed };
-    });
-    onChangeTodos(newTodos);
+  const toggleComplete = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    const { data } = await supabase.from("todos").update({ completed: !todo.completed }).eq("id", id).select();
+    if (data) {
+      onChangeTodos(todos.map((t) => (t.id === id ? { ...t, completed: !todo.completed } : t)));
+    }
   };
 
   return (
